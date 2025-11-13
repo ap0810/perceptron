@@ -18,24 +18,24 @@
 3. **Format Requirements**
    ```markdown
    # TODO - Future Work
-   
+
    > ⚠️ **WARNING:** This document must be signed before pushing to GitHub.
-   
+
    **Last Updated:** [Date and Time]
-   
+
    [TODO items...]
-   
+
    ## Session Notes - [Date] ([Time Period])
-   
+
    ### Completed Today
    [List of completed items]
-   
+
    ### Next Session
    [List of next items]
-   
+
    ---
-   
-   **Signed:** _[Signature Required]_  
+
+   **Signed:** _[Signature Required]_
    **Date:** _[Date Required]_
    ```
 
