@@ -86,3 +86,6 @@ ruff-cache/
 *~
 __pypackages__/
 CODE_REVIEW.md
+
+# Demo folder (not ready for push)
+perceptron-demo/
