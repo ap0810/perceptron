@@ -2,7 +2,7 @@
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](https://github.com/ap0810/perceptron/actions)
+[![CI](https://github.com/ap0810/perceptron/actions/workflows/ci.yml/badge.svg)](https://github.com/ap0810/perceptron/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/badge/coverage-via%20pytest--cov-blue)](https://github.com/ap0810/perceptron/actions)
 
 A minimal, deterministic implementation of the [perceptron](https://en.wikipedia.org/wiki/Perceptron) - [Frank Rosenblatt](https://en.wikipedia.org/wiki/Frank_Rosenblatt)'s foundational artificial neural network from 1958. Built with pure Python and no external dependencies.
