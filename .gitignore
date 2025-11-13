@@ -85,3 +85,4 @@ ruff-cache/
 *.bak
 *~
 __pypackages__/
+CODE_REVIEW.md
