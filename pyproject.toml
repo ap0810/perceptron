@@ -1,0 +1,82 @@
+[project]
+name = "perceptron"
+version = "0.1.0"
+description = "Minimal pure-Python perceptron trainer (example/demo)"
+authors = [ { name = "Adrian Paredez" } ]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+keywords = ["ml", "perceptron", "example"]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0",
+  "pytest-cov>=4.0",
+  "ruff",
+  "mypy",
+  "pre-commit",
+]
+
+[tool.ruff]
+# Basic Ruff configuration suitable for a small project.
+line-length = 88
+# Exclude a variety of commonly ignored directories (official Ruff defaults)
+exclude = [
+	".bzr",
+	".direnv",
+	".eggs",
+	".git",
+	".git-rewrite",
+	".hg",
+	".ipynb_checkpoints",
+	".mypy_cache",
+	".nox",
+	".pants.d",
+	".pyenv",
+	".pytest_cache",
+	".pytype",
+	".ruff_cache",
+	".svn",
+	".tox",
+	".venv",
+	".vscode",
+	"__pypackages__",
+	"_build",
+	"buck-out",
+	"build",
+	"dist",
+	"node_modules",
+	"site-packages",
+	"venv",
+]
+
+# Target Python version for Ruff (helps with version-specific rules/fixes)
+target-version = "py312"
+
+# Enable automatic fixes when running `ruff --fix` for this project
+fix = true
+
+[tool.ruff.lint]
+# Default selects (Ruff defaults): enable Pyflakes (F) and a subset of pycodestyle (E)
+select = ["E4", "E7", "E9", "F"]
+ignore = []
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+# Like Black.
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = false
+docstring-code-line-length = "dynamic"
