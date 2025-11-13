@@ -89,3 +89,6 @@ CODE_REVIEW.md
 
 # Demo folder (not ready for push)
 perceptron-demo/
+
+# TODO requires signature before push
+TODO.md
