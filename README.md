@@ -208,11 +208,9 @@ GitHub: [ap0810/perceptron](https://github.com/ap0810/perceptron)
 
 - [The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain](https://en.wikipedia.org/wiki/Perceptron#History) - Frank Rosenblatt (1958)
 - [Perceptron - Wikipedia](https://en.wikipedia.org/wiki/Perceptron)
-- [Perceptron Learning Algorithm - GeeksforGeeks](https://www.geeksforgeeks.org/perceptron-learning-algorithm/)
 - [XOR Problem - Wikipedia](https://en.wikipedia.org/wiki/XOR_problem)
 - [Multilayer Perceptron - Wikipedia](https://en.wikipedia.org/wiki/Multilayer_perceptron)
 - [Artificial Neuron - Wikipedia](https://en.wikipedia.org/wiki/Artificial_neuron)
-- [Machine Learning Basics - Stanford](https://web.stanford.edu/class/psych209/Readings/Hinton1989.pdf)
 
 ---
 
