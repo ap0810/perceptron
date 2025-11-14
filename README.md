@@ -82,7 +82,7 @@ python main.py
 
 The trainer will:
 
-1. Initialize weights to zero for reproducibility
+1. Initialize weights to zero for deterministic results (see [Why Zero Initialization?](#why-zero-initialization))
 2. Train on the AND gate dataset
 3. Display real-time training progress to console
 4. Log results to `training.log`
@@ -97,7 +97,7 @@ Results will show epoch-by-epoch accuracy and final model parameters.
 Command-line interface for advanced configuration:
 
 ```bash
-python main.py [--gate GATE] [--lr LR] [--epochs EPOCHS] [--visualize] [--quiet]
+python main.py [--gate GATE] [--lr LR] [--epochs EPOCHS] [--visualize] [--quiet] [--init INIT] [--seed SEED]
 ```
 
 Arguments:
@@ -107,12 +107,16 @@ Arguments:
 - `--epochs EPOCHS` : Maximum epochs; default: 100
 - `--visualize` : Show ASCII decision boundary visualization
 - `--quiet` : Minimal output (errors only)
+- `--init INIT` : Weight initialization method (zero, random); default: zero
+- `--seed SEED` : Random seed for reproducible random initialization
 
 Examples:
 
 ```bash
-python main.py --gate OR --learning-rate 0.5
+python main.py --gate OR --lr 0.5
 python main.py --gate NAND --epochs 200
+python main.py --gate AND --init random --seed 42
+python main.py --gate OR --init random --seed 123 --visualize
 ```
 
 ---
@@ -187,10 +191,102 @@ The trainer logs progress to console and file with timestamps, displays training
 
 ---
 
+## Why Zero Initialization?
+
+This implementation uses **zero initialization** for pedagogical reasons, which differs from standard ML practices. Here's why and how to switch:
+
+### Pedagogical Choice (Current Default)
+
+**Zero initialization** makes results completely deterministic and reproducible across runs:
+
+```python
+# Current approach in main.py
+w1, w2, bias = 0.0, 0.0, 0.0  # Always the same starting point
+```
+
+**Benefits for learning:**
+- Identical results every time (no randomness to confuse beginners)
+- Easy to debug and verify against expected outputs
+- Clear demonstration of the learning algorithm's behavior
+- Simplified testing and validation
+
+### Standard ML Practice (Recommended for Production)
+
+**Random initialization** with controlled seeds is the industry standard:
+
+```python
+import random
+
+# Standard approach with reproducible randomness
+random.seed(42)  # For reproducibility
+w1 = random.uniform(-0.5, 0.5)
+w2 = random.uniform(-0.5, 0.5)
+bias = random.uniform(-0.5, 0.5)
+```
+
+**Benefits for real applications:**
+- Breaks symmetry in neural networks
+- Improves model diversity and generalization
+- Prevents identical neurons in multi-layer networks
+- Industry standard practice
+
+### Switching to Random Initialization
+
+To use random initialization while maintaining reproducibility:
+
+```bash
+# Use random initialization with reproducible seed
+python main.py --init random --seed 42
+python main.py --init zero    # Current default (pedagogical)
+
+# Random initialization without seed (different results each run)
+python main.py --init random
+
+# Compare the two approaches on the same problem
+python main.py --gate AND --init zero --visualize
+python main.py --gate AND --init random --seed 42 --visualize
+```
+
+**Implementation (now available in `main.py`):**
+
+The `initialize_weights()` function supports both initialization methods:
+
+```python
+def initialize_weights(init_type="zero", seed=None):
+    """Initialize perceptron weights."""
+    if init_type == "zero":
+        return 0.0, 0.0, 0.0
+    elif init_type == "random":
+        if seed is not None:
+            random.seed(seed)
+        w1 = random.uniform(-0.5, 0.5)
+        w2 = random.uniform(-0.5, 0.5)
+        bias = random.uniform(-0.5, 0.5)
+        return w1, w2, bias
+    else:
+        raise ValueError(f"Unknown init_type: {init_type}")
+```
+
+### Trade-offs Summary
+
+| Aspect | Zero Init (Current) | Random Init (Standard) |
+|--------|-------------------|----------------------|
+| **Reproducibility** | Perfect (no seed needed) | Good (with seed) |
+| **Learning Value** | High (predictable) | Medium (realistic) |
+| **Industry Practice** | No | Yes |
+| **Debugging** | Easy | Moderate |
+| **Scalability** | Poor (symmetry issues) | Good |
+
+### Recommendation
+
+- **For learning**: Use zero initialization (current default)
+- **For production**: Switch to random initialization with seeds
+- **For research**: Use random initialization with multiple seeds for statistical significance
+
 ## Note
 
 > [!NOTE]
-> This implementation prioritizes **clarity and determinism** over performance. The perceptron is initialized with zero weights, making results fully reproducible. All weights are initialized to zero rather than random values - this is intentional for teaching purposes and reproducibility. In production systems, weights are typically initialized randomly to break symmetry and improve model diversity.
+> This implementation prioritizes **clarity and determinism** over performance for educational purposes. The zero initialization choice is intentional for teaching, but learners should understand that production ML systems typically use random initialization to break symmetry and improve model diversity.
 
 For more information about the perceptron and its limitations, see the [XOR Problem](https://en.wikipedia.org/wiki/XOR_problem) and [Multilayer Perceptron](https://en.wikipedia.org/wiki/Multilayer_perceptron).
 
