@@ -84,6 +84,7 @@ __version__ = "0.1.0"
 import logging
 import argparse
 import sys
+import random
 from typing import Tuple, List
 
 
@@ -97,6 +98,38 @@ LOGIC_GATES = {
     "NOR": ([0, 0, 1, 1], [0, 1, 0, 1], [1, 0, 0, 0]),
     "XOR": ([0, 0, 1, 1], [0, 1, 0, 1], [0, 1, 1, 0]),  # Not linearly separable!
 }
+
+
+# -----------------------------------------------------------------------------
+# Weight Initialization
+# -----------------------------------------------------------------------------
+def initialize_weights(init_type: str = "zero", seed: int = None) -> Tuple[float, float, float]:
+    """
+    Initialize perceptron weights using different strategies.
+    
+    Args:
+        init_type (str): Initialization method ("zero" or "random")
+        seed (int): Random seed for reproducible random initialization
+        
+    Returns:
+        tuple: (w1, w2, bias) - Initial weight values
+        
+    Raises:
+        ValueError: If init_type is not "zero" or "random"
+    """
+    if init_type == "zero":
+        # Pedagogical choice: deterministic, identical results every run
+        return 0.0, 0.0, 0.0
+    elif init_type == "random":
+        # Industry standard: random initialization with optional seed
+        if seed is not None:
+            random.seed(seed)
+        w1 = random.uniform(-0.5, 0.5)
+        w2 = random.uniform(-0.5, 0.5)
+        bias = random.uniform(-0.5, 0.5)
+        return w1, w2, bias
+    else:
+        raise ValueError(f"Unknown init_type: {init_type}. Use 'zero' or 'random'.")
 
 
 # -----------------------------------------------------------------------------
@@ -212,7 +245,11 @@ def visualize_decision_boundary(
 # Training Function
 # -----------------------------------------------------------------------------
 def train(
-    gate_type: str = "AND", learning_rate: float = 0.1, max_epochs: int = 100
+    gate_type: str = "AND", 
+    learning_rate: float = 0.1, 
+    max_epochs: int = 100,
+    init_type: str = "zero",
+    seed: int = None
 ) -> Tuple[float, float, float, bool]:
     """
     Train a single-layer perceptron on a specified logic gate dataset.
@@ -224,6 +261,8 @@ def train(
         gate_type (str): Type of logic gate (AND, OR, NAND, NOR, XOR)
         learning_rate (float): Determines the magnitude of parameter updates.
         max_epochs (int): Maximum number of training passes through the dataset.
+        init_type (str): Weight initialization method ("zero" or "random")
+        seed (int): Random seed for reproducible random initialization
 
     Returns:
         tuple: (w1, w2, bias, converged) - Final parameters and convergence status
@@ -254,9 +293,18 @@ def train(
         )
         logging.warning("")
 
-    # Initialize weights and bias to zero to maintain full determinism.
-    w1, w2, bias = 0.0, 0.0, 0.0
+    # Initialize weights using specified method
+    w1, w2, bias = initialize_weights(init_type, seed)
     converged = False
+    
+    # Log initialization method
+    if init_type == "zero":
+        logging.info("Initialization: Zero weights (pedagogical/deterministic)")
+    else:
+        seed_info = f" with seed {seed}" if seed is not None else " (no seed)"
+        logging.info(f"Initialization: Random weights{seed_info} (industry standard)")
+    logging.info(f"Initial weights: w1={w1:.3f}, w2={w2:.3f}, bias={bias:.3f}")
+    logging.info("")
 
     # ────────────────────────────────────────────────────────────────────────
     # Training Loop
@@ -403,9 +451,15 @@ Examples:
   %(prog)s --gate AND --lr 0.1 --epochs 10
   %(prog)s --gate OR --lr 0.2 --epochs 20 --visualize
   %(prog)s --gate XOR --lr 0.1 --epochs 100
+  %(prog)s --gate AND --init random --seed 42
+  %(prog)s --gate OR --init random --seed 123 --visualize
 
 Available gates: AND, OR, NAND, NOR, XOR
 Note: XOR is not linearly separable and will not converge.
+
+Initialization methods:
+  zero   - Deterministic (same results every run)
+  random - Industry standard (use --seed for reproducibility)
         """,
     )
     parser.add_argument(
@@ -429,6 +483,19 @@ Note: XOR is not linearly separable and will not converge.
     parser.add_argument(
         "--quiet", action="store_true", help="Minimal output (errors only)"
     )
+    parser.add_argument(
+        "--init",
+        type=str,
+        default="zero",
+        choices=["zero", "random"],
+        help="Weight initialization method (default: zero for reproducibility)"
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Random seed for reproducible random initialization (only with --init random)"
+    )
 
     args = parser.parse_args()
 
@@ -449,6 +516,9 @@ Note: XOR is not linearly separable and will not converge.
     if args.epochs < 1:
         print(f"Error: Epochs must be at least 1 (got {args.epochs})", file=sys.stderr)
         sys.exit(1)
+    
+    if args.seed is not None and args.init == "zero":
+        print("Warning: --seed has no effect with --init zero", file=sys.stderr)
 
     if args.epochs > 10000:
         print(
@@ -474,7 +544,7 @@ Note: XOR is not linearly separable and will not converge.
     # Training
     # ────────────────────────────────────────────────────────────────────────
     try:
-        w1, w2, bias, converged = train(args.gate, args.lr, args.epochs)
+        w1, w2, bias, converged = train(args.gate, args.lr, args.epochs, args.init, args.seed)
 
         # Visualize decision boundary if requested
         if args.visualize:
