@@ -199,6 +199,89 @@ class TestPredictionsAfterTraining:
             assert pred == y[i], f"NAND gate prediction mismatch at sample {i}"
 
 
+class TestInitializeWeights:
+    """Test the weight initialization function."""
+
+    def test_zero_initialization(self) -> None:
+        """Test zero weight initialization."""
+        w1, w2, bias = main.initialize_weights("zero")
+        assert w1 == 0.0
+        assert w2 == 0.0
+        assert bias == 0.0
+
+    def test_zero_initialization_with_seed(self) -> None:
+        """Test zero initialization ignores seed."""
+        w1, w2, bias = main.initialize_weights("zero", seed=42)
+        assert w1 == 0.0
+        assert w2 == 0.0
+        assert bias == 0.0
+
+    def test_random_initialization(self) -> None:
+        """Test random weight initialization."""
+        w1, w2, bias = main.initialize_weights("random")
+        # Should be in range [-0.5, 0.5]
+        assert -0.5 <= w1 <= 0.5
+        assert -0.5 <= w2 <= 0.5
+        assert -0.5 <= bias <= 0.5
+
+    def test_random_initialization_with_seed(self) -> None:
+        """Test random initialization with seed is reproducible."""
+        w1_a, w2_a, bias_a = main.initialize_weights("random", seed=42)
+        w1_b, w2_b, bias_b = main.initialize_weights("random", seed=42)
+
+        # Should be identical with same seed
+        assert w1_a == w1_b
+        assert w2_a == w2_b
+        assert bias_a == bias_b
+
+    def test_random_initialization_different_seeds(self) -> None:
+        """Test random initialization with different seeds gives different results."""
+        w1_a, w2_a, bias_a = main.initialize_weights("random", seed=42)
+        w1_b, w2_b, bias_b = main.initialize_weights("random", seed=123)
+
+        # Should be different with different seeds (very high probability)
+        assert not (w1_a == w1_b and w2_a == w2_b and bias_a == bias_b)
+
+    def test_invalid_init_type(self) -> None:
+        """Test invalid initialization type raises error."""
+        try:
+            main.initialize_weights("invalid")
+            assert False, "Should raise ValueError for invalid init_type"
+        except ValueError as e:
+            assert "Unknown init_type" in str(e)
+
+
+class TestTrainingWithInitialization:
+    """Test training with different initialization methods."""
+
+    def test_train_with_zero_init(self) -> None:
+        """Test training with zero initialization."""
+        w1, w2, bias, converged = main.train("AND", init_type="zero", max_epochs=100)
+        assert converged, "AND gate should converge with zero initialization"
+
+    def test_train_with_random_init(self) -> None:
+        """Test training with random initialization."""
+        w1, w2, bias, converged = main.train(
+            "AND", init_type="random", seed=42, max_epochs=100
+        )
+        assert converged, "AND gate should converge with random initialization"
+
+    def test_train_random_reproducible(self) -> None:
+        """Test training with random initialization is reproducible with seed."""
+        w1_a, w2_a, bias_a, conv_a = main.train(
+            "AND", init_type="random", seed=42, max_epochs=100
+        )
+        w1_b, w2_b, bias_b, conv_b = main.train(
+            "AND", init_type="random", seed=42, max_epochs=100
+        )
+
+        # Results should be identical with same seed
+        assert w1_a == w1_b
+        assert w2_a == w2_b
+        assert bias_a == bias_b
+        assert conv_a == conv_b
+
+
 class TestTestFunction:
     """Test the test/evaluation function."""
 

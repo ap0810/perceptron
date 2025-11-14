@@ -85,7 +85,7 @@ import logging
 import argparse
 import sys
 import random
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 
 
 # -----------------------------------------------------------------------------
@@ -103,17 +103,19 @@ LOGIC_GATES = {
 # -----------------------------------------------------------------------------
 # Weight Initialization
 # -----------------------------------------------------------------------------
-def initialize_weights(init_type: str = "zero", seed: int = None) -> Tuple[float, float, float]:
+def initialize_weights(
+    init_type: str = "zero", seed: Optional[int] = None
+) -> Tuple[float, float, float]:
     """
     Initialize perceptron weights using different strategies.
-    
+
     Args:
         init_type (str): Initialization method ("zero" or "random")
         seed (int): Random seed for reproducible random initialization
-        
+
     Returns:
         tuple: (w1, w2, bias) - Initial weight values
-        
+
     Raises:
         ValueError: If init_type is not "zero" or "random"
     """
@@ -245,11 +247,11 @@ def visualize_decision_boundary(
 # Training Function
 # -----------------------------------------------------------------------------
 def train(
-    gate_type: str = "AND", 
-    learning_rate: float = 0.1, 
+    gate_type: str = "AND",
+    learning_rate: float = 0.1,
     max_epochs: int = 100,
     init_type: str = "zero",
-    seed: int = None
+    seed: Optional[int] = None,
 ) -> Tuple[float, float, float, bool]:
     """
     Train a single-layer perceptron on a specified logic gate dataset.
@@ -296,7 +298,7 @@ def train(
     # Initialize weights using specified method
     w1, w2, bias = initialize_weights(init_type, seed)
     converged = False
-    
+
     # Log initialization method
     if init_type == "zero":
         logging.info("Initialization: Zero weights (pedagogical/deterministic)")
@@ -488,13 +490,13 @@ Initialization methods:
         type=str,
         default="zero",
         choices=["zero", "random"],
-        help="Weight initialization method (default: zero for reproducibility)"
+        help="Weight initialization method (default: zero for reproducibility)",
     )
     parser.add_argument(
         "--seed",
         type=int,
         default=None,
-        help="Random seed for reproducible random initialization (only with --init random)"
+        help="Random seed for reproducible random initialization (only with --init random)",
     )
 
     args = parser.parse_args()
@@ -516,7 +518,7 @@ Initialization methods:
     if args.epochs < 1:
         print(f"Error: Epochs must be at least 1 (got {args.epochs})", file=sys.stderr)
         sys.exit(1)
-    
+
     if args.seed is not None and args.init == "zero":
         print("Warning: --seed has no effect with --init zero", file=sys.stderr)
 
@@ -544,7 +546,9 @@ Initialization methods:
     # Training
     # ────────────────────────────────────────────────────────────────────────
     try:
-        w1, w2, bias, converged = train(args.gate, args.lr, args.epochs, args.init, args.seed)
+        w1, w2, bias, converged = train(
+            args.gate, args.lr, args.epochs, args.init, args.seed
+        )
 
         # Visualize decision boundary if requested
         if args.visualize:
