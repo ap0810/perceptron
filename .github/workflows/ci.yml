@@ -54,7 +54,7 @@ jobs:
 
       - name: Type check with mypy
         run: |
-          mypy main.py || true
+          mypy --strict main.py
 
       - name: Run tests with coverage
         run: |
