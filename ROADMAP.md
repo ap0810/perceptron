@@ -22,7 +22,7 @@ This roadmap is guided by the repository's foundational design goals:
   - Add inline LaTeX-style comments explaining the perceptron learning rule
   - Include derivation steps for weight update equations
   - Explain the geometric interpretation of the decision boundary
-  
+
 - [ ] **Concept Explanations in Docstrings**
   - Expand docstrings to explain key ML concepts (linear separability, convergence)
   - Add "Why this matters" sections to major functions
@@ -247,7 +247,7 @@ Each feature must pass these educational quality checks:
 To maintain focus on educational value, the following are **intentionally excluded**:
 
 - **GPU/Distributed Computing**: Unnecessary for educational scale
-- **ML Framework Integration**: Maintains pure Python approach  
+- **ML Framework Integration**: Maintains pure Python approach
 - **Production-Scale Features**: Focus remains on learning
 - **Research-Grade Complexity**: Beginner-friendly throughout
 - **Feature Bloat**: Each addition must serve clear educational purpose
@@ -261,7 +261,7 @@ To maintain focus on educational value, the following are **intentionally exclud
 - Share common student misconceptions to address
 - Provide feedback on educational effectiveness
 
-### For Developers  
+### For Developers
 - Prioritize code clarity over performance optimization
 - Maintain comprehensive comments and documentation
 - Ensure all changes preserve deterministic behavior
@@ -280,7 +280,7 @@ To maintain focus on educational value, the following are **intentionally exclud
 - Establish tutorial and example framework
 - Improve documentation and comments
 
-### **Q2 2025: Structural Improvements**  
+### **Q2 2025: Structural Improvements**
 - Implement minimal modular organization
 - Add educational class design
 - Enhance testing for learning verification
